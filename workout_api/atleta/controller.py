@@ -59,6 +59,12 @@ async def post(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
             detail='Ocorreu um erro ao inserir os dados no banco'
         )
+    except sqlalchemy.exc.IntegrityError as Integrity_Error:
+        if "cpf" in str(Integrity_Error):
+            raise HTTPException(
+                status_code=status.HTTP_303_SEE_OTHER,
+                detail=f"O atleta cadastrado com o CPF informado: {atleta_in.cpf} já existe."
+            )
 
     return atleta_out
 
@@ -70,7 +76,9 @@ async def post(
     response_model=list[AtletaOut],
 )
 async def query(db_session: DatabaseDependency) -> list[AtletaOut]:
-    atletas: list[AtletaOut] = (await db_session.execute(select(AtletaModel))).scalars().all()
+    atletas: list[AtletaOut] = (
+        await db_session.execute(query=select(AtletaModel))).scalars().all(
+        )
     
     return [AtletaOut.model_validate(atleta) for atleta in atletas]
 

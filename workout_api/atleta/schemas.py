@@ -16,6 +16,10 @@ class Atleta(BaseSchema):
     categoria: Annotated[CategoriaIn, Field(description='Categoria do atleta')]
     centro_treinamento: Annotated[CentroTreinamentoAtleta, Field(description='Centro de treinamento do atleta')]
 
+class AtletaCustomReturn(BaseSchema):
+    nome: str
+    categoria: str
+    centro_treinamento: str
 
 class AtletaIn(Atleta):
     pass
